@@ -11,7 +11,7 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: redis
+          type: keyvalue
           name: leadgen-redis
           property: connectionString
       - key: SECRET_KEY
@@ -32,17 +32,17 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: redis
+          type: keyvalue
           name: leadgen-redis
           property: connectionString
       - key: GOOGLE_MAPS_API_KEY
         sync: false # Set this manually in Render dashboard
 
+  - type: keyvalue
+    name: leadgen-redis
+    ipAllowList: []
+
 databases:
   - name: leadgen-db
     databaseName: leadgen
     user: leadgen
-
-redis:
-  - name: leadgen-redis
-    ipAllowList: []
