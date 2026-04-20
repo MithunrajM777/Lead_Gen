@@ -12,6 +12,8 @@ load_dotenv()
 # For this implementation, I'll use SQLite by default for easy setup, 
 # but it's easily switchable to Postgres via environment variable.
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./scrapeverify.db")
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # If it's a relative SQLite path, make it absolute to the current project directory if desired,
 # but keeping it simple for dev:
