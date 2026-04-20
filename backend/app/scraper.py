@@ -5,7 +5,7 @@ import random
 import httpx
 from typing import List, Dict, Any, Optional
 from playwright.async_api import async_playwright
-from playwright_stealth import stealth_async
+from playwright_stealth import stealth
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 
@@ -214,7 +214,7 @@ class WebCrawler:
             
             # Apply Stealth
             page = await context.new_page()
-            await stealth_async(page)
+            await stealth(page)
             
             pages_crawled = 0
 
@@ -310,7 +310,7 @@ async def scrape_google_maps(keyword: str, location: str, max_results: int = 50)
             viewport={"width": 1280, "height": 720}
         )
         page = await context.new_page()
-        await stealth_async(page)
+        await stealth(page)
 
         try:
             # Retry logic for search page
