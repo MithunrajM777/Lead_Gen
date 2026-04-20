@@ -21,7 +21,10 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="LeadGen SaaS Pro API")
 
-CORS_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000").split(",")
+CORS_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS", 
+    "https://lead-gen-psi-topaz.vercel.app,http://localhost:5173,http://127.0.0.1:5173"
+).split(",")
 
 app.add_middleware(
     CORSMiddleware,

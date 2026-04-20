@@ -18,7 +18,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: ALLOWED_ORIGINS
-        value: "https://your-vercel-domain.vercel.app,http://localhost:5173"
+        value: "https://lead-gen-psi-topaz.vercel.app,http://localhost:5173"
 
   - type: keyvalue
     name: leadgen-redis
