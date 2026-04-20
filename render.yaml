@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: leadgen-api
+    runtime: docker
+    dockerContext: backend
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: leadgen-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: leadgen-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: "https://your-vercel-domain.vercel.app,http://localhost:5173"
+
+  - type: worker
+    name: leadgen-worker
+    runtime: docker
+    dockerContext: backend
+    dockerfilePath: Dockerfile
+    dockerCommand: celery -A app.celery_app worker --loglevel=info
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: leadgen-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: leadgen-redis
+          property: connectionString
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false # Set this manually in Render dashboard
+
+databases:
+  - name: leadgen-db
+    databaseName: leadgen
+    user: leadgen
+
+redis:
+  - name: leadgen-redis
+    ipAllowList: []

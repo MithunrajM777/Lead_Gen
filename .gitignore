@@ -1,0 +1,34 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python dependencies
+**/__pycache__/
+*.py[cod]
+*$py.class
+**/venv/
+**/.venv/
+**/env/
+**/.env
+.python-version
+
+# Node.js dependencies
+**/node_modules/
+**/dist/
+**/build/
+.npm
+.eslintcache
+
+# Database and Scraping Output
+*.db
+*.db-journal
+**/output/
+*.csv
+
+# Vercel and IDEs
+.vercel
+.vscode/
+.idea/
+*.swp
+*.swo

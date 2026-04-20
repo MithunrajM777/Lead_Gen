@@ -1,0 +1,51 @@
+/* App.css — Project-specific overrides */
+
+/* ─── Loading screen ─────────────────────────────────────────────────────── */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ─── Nav responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  nav h1 { font-size: 1.1rem !important; }
+  nav p  { display: none; }
+}
+
+/* ─── Stat number typography ─────────────────────────────────────────────── */
+.stat-number {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  line-height: 1;
+}
+
+/* ─── Table scroll hint on small screens ─────────────────────────────────── */
+@media (max-width: 860px) {
+  .lead-table-wrapper::after {
+    content: '← scroll →';
+    display: block;
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    padding: 0.4rem;
+  }
+}
+
+/* ─── Auth page link hover ───────────────────────────────────────────────── */
+.auth-card a:hover {
+  text-decoration: underline;
+}
+
+/* ─── Focus ring for accessibility ──────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
