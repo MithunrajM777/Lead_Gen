@@ -13,7 +13,7 @@ from pydantic import BaseModel
 import os
 
 from . import models, database, scraper, validator, auth, worker
-from .database import engine, get_db
+from .database import engine, get_db, SessionLocal
 
 # Create tables
 database.ensure_legacy_schema_compatibility()
@@ -47,6 +47,22 @@ async def global_exception_handler(request, exc):
             "Access-Control-Allow-Credentials": "true"
         }
     )
+
+@app.on_event("startup")
+async def startup_event():
+    # Cleanup stuck jobs on startup
+    db = SessionLocal()
+    try:
+        from datetime import datetime, timedelta
+        # Reset jobs that have been 'PROCESSING' but are likely hung
+        stuck_jobs = db.query(models.Job).filter(
+            models.Job.status == models.JobStatus.PROCESSING
+        ).all()
+        for job in stuck_jobs:
+            job.status = models.JobStatus.PENDING
+        db.commit()
+    finally:
+        db.close()
 
 @app.get("/")
 async def root():

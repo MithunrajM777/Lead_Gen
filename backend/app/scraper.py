@@ -5,6 +5,7 @@ import random
 import httpx
 from typing import List, Dict, Any, Optional
 from playwright.async_api import async_playwright
+from playwright_stealth import stealth_async
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 
@@ -197,12 +198,24 @@ class WebCrawler:
             browser = await p.chromium.launch(
                 headless=True, 
                 proxy=proxy, 
-                args=["--disable-dev-shm-usage", "--no-sandbox", "--disable-gpu", "--disable-setuid-sandbox"]
+                args=[
+                    "--disable-dev-shm-usage", 
+                    "--no-sandbox", 
+                    "--disable-gpu", 
+                    "--disable-setuid-sandbox",
+                    "--single-process", # Critical for 512MB RAM
+                    "--disable-extensions"
+                ]
             )
             context = await browser.new_context(
                 user_agent=get_random_ua(),
-                extra_http_headers={"Accept-Language": "en-US,en;q=0.9"},
+                viewport={"width": 1280, "height": 720}
             )
+            
+            # Apply Stealth
+            page = await context.new_page()
+            await stealth_async(page)
+            
             pages_crawled = 0
 
             while queue and pages_crawled < self.max_pages:
@@ -283,13 +296,21 @@ async def scrape_google_maps(keyword: str, location: str, max_results: int = 50)
         browser = await p.chromium.launch(
             headless=True, 
             proxy=proxy,
-            args=["--disable-dev-shm-usage", "--no-sandbox", "--disable-gpu", "--disable-setuid-sandbox"]
+            args=[
+                "--disable-dev-shm-usage", 
+                "--no-sandbox", 
+                "--disable-gpu", 
+                "--disable-setuid-sandbox",
+                "--single-process",
+                "--disable-extensions"
+            ]
         )
         context = await browser.new_context(
             user_agent=get_random_ua(),
-            extra_http_headers={"Accept-Language": "en-US,en;q=0.9"},
+            viewport={"width": 1280, "height": 720}
         )
         page = await context.new_page()
+        await stealth_async(page)
 
         try:
             # Retry logic for search page
