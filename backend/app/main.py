@@ -10,6 +10,7 @@ import asyncio
 import io
 import csv
 from pydantic import BaseModel
+import os
 
 from . import models, database, scraper, validator, auth, worker
 from .database import engine, get_db
