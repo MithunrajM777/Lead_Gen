@@ -194,7 +194,11 @@ class WebCrawler:
 
         async with async_playwright() as p:
             proxy = get_random_proxy()
-            browser = await p.chromium.launch(headless=True, proxy=proxy)
+            browser = await p.chromium.launch(
+                headless=True, 
+                proxy=proxy, 
+                args=["--disable-dev-shm-usage", "--no-sandbox", "--disable-gpu", "--disable-setuid-sandbox"]
+            )
             context = await browser.new_context(
                 user_agent=get_random_ua(),
                 extra_http_headers={"Accept-Language": "en-US,en;q=0.9"},
@@ -276,7 +280,11 @@ async def scrape_google_maps(keyword: str, location: str, max_results: int = 50)
     async with async_playwright() as p:
         proxy = get_random_proxy()
         # Launch persistent context or just fresh browser
-        browser = await p.chromium.launch(headless=True, proxy=proxy)
+        browser = await p.chromium.launch(
+            headless=True, 
+            proxy=proxy,
+            args=["--disable-dev-shm-usage", "--no-sandbox", "--disable-gpu", "--disable-setuid-sandbox"]
+        )
         context = await browser.new_context(
             user_agent=get_random_ua(),
             extra_http_headers={"Accept-Language": "en-US,en;q=0.9"},
