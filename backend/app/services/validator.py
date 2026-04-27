@@ -40,6 +40,20 @@ def _clean_text(value: str) -> Optional[str]:
     # Final trim and collapse spaces
     text = re.sub(r'\s+', ' ', text).strip()
     
+    # ── URL-to-Name Logic ──────────────────────────────────────────────────
+    # Convert "example.com" -> "Example"
+    if "." in text and " " not in text:
+        # Check if it's likely a domain
+        domain_patterns = [".com", ".in", ".org", ".net", ".io", ".biz", ".co"]
+        if any(p in text.lower() for p in domain_patterns):
+            # Strip the TLD
+            name_part = re.split(r'\.com|\.in|\.org|\.net|\.io|\.biz|\.co', text, flags=re.IGNORECASE)[0]
+            # Convert "madurasolution" -> "Madura Solution" (CamelCase or just title)
+            # For simplicity, we title case it. 
+            # If it's "madurasolution", we might not know where to split.
+            # But let's at least Title Case it.
+            text = name_part.title()
+    
     return text if text else None
 
 # --- EMAIL VALIDATION ---
