@@ -10,13 +10,6 @@ services:
         fromDatabase:
           name: leadgen-db
           property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: leadgen-redis
-          property: connectionString
-      - key: SECRET_KEY
-        generateValue: true
       - key: PLAYWRIGHT_BROWSERS_PATH
         value: /opt/render/project/playwright
       - key: CORS_ORIGINS
@@ -27,24 +20,14 @@ services:
     env: python
     rootDir: backend
     buildCommand: pip install -r requirements.txt && playwright install chromium
-    startCommand: celery -A app.services.celery_app worker --loglevel=info
+    startCommand: python -m app.services.worker # Run as a simple python process
     envVars:
       - key: DATABASE_URL
         fromDatabase:
           name: leadgen-db
           property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: leadgen-redis
-          property: connectionString
       - key: PLAYWRIGHT_BROWSERS_PATH
         value: /opt/render/project/playwright
-
-  - type: redis
-    name: leadgen-redis
-    plan: free
-    ipAllowList: [] # Only allow internal connections
 
 databases:
   - name: leadgen-db

@@ -87,9 +87,9 @@ async def upload_excel(
     db.refresh(new_job)
 
     try:
-        worker.process_bulk_leadgen_job.delay(new_job.id)
-    except Exception:
-        background_tasks.add_task(worker.run_bulk_job_sync, new_job.id)
+        background_tasks.add_task(worker.run_bulk_job, new_job.id)
+    except Exception as e:
+        logger.error(f"Failed to start background task: {e}")
 
     scraper.active_jobs[new_job.id] = True
 
@@ -147,9 +147,9 @@ async def create_job(
     db.refresh(new_job)
 
     try:
-        worker.process_leadgen_job.delay(new_job.id)
-    except Exception:
-        background_tasks.add_task(worker.run_job_sync, new_job.id)
+        background_tasks.add_task(worker.run_job, new_job.id)
+    except Exception as e:
+        logger.error(f"Failed to start background task: {e}")
 
     scraper.active_jobs[new_job.id] = True
 

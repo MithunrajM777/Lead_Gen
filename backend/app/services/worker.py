@@ -1,6 +1,3 @@
-import asyncio
-from celery import Task
-from .celery_app import celery_app
 from .. import models, database
 from . import scraper, validator
 from ..database import SessionLocal
@@ -12,28 +9,27 @@ from urllib.parse import urlparse
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class DatabaseTask(Task):
-    _db = None
+class WorkerTask:
+    """Helper to simulate the Celery task context (db session)"""
+    def __init__(self):
+        self.db = SessionLocal()
+    
+    def close(self):
+        self.db.close()
 
-    @property
-    def db(self):
-        if self._db is None:
-            self._db = SessionLocal()
-        return self._db
+async def run_job(job_id: int):
+    task = WorkerTask()
+    try:
+        await async_process_job(task, job_id)
+    finally:
+        task.close()
 
-    def after_return(self, *args, **kwargs):
-        if self._db is not None:
-            self._db.close()
-            self._db = None
-
-@celery_app.task(bind=True, base=DatabaseTask)
-def process_leadgen_job(self, job_id: int):
-    # This needs to run in an event loop because scrapers are async
-    return asyncio.run(async_process_job(self, job_id))
-
-@celery_app.task(bind=True, base=DatabaseTask)
-def process_bulk_leadgen_job(self, job_id: int):
-    return asyncio.run(async_process_bulk_job(self, job_id))
+async def run_bulk_job(job_id: int):
+    task = WorkerTask()
+    try:
+        await async_process_bulk_job(task, job_id)
+    finally:
+        task.close()
 
 async def async_process_job(task, job_id: int):
     db = task.db
