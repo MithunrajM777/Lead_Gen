@@ -41,11 +41,11 @@ services:
       - key: PLAYWRIGHT_BROWSERS_PATH
         value: /opt/render/project/playwright
 
+  - type: redis
+    name: leadgen-redis
+    plan: free
+    ipAllowList: [] # Only allow internal connections
+
 databases:
   - name: leadgen-db
     plan: free
-
-redisInstances:
-  - name: leadgen-redis
-    plan: free
-    ipAllowList: [] # Only allow internal connections
