@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: leadgen-api
+    env: python
+    buildCommand: pip install -r requirements.txt && playwright install chromium
+    startCommand: gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: leadgen-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: leadgen-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PLAYWRIGHT_BROWSERS_PATH
+        value: /opt/render/project/playwright
+      - key: CORS_ORIGINS
+        value: "*"
+
+  - type: worker
+    name: leadgen-worker
+    env: python
+    buildCommand: pip install -r requirements.txt && playwright install chromium
+    startCommand: celery -A app.services.celery_app worker --loglevel=info
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: leadgen-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: leadgen-redis
+          property: connectionString
+      - key: PLAYWRIGHT_BROWSERS_PATH
+        value: /opt/render/project/playwright
+
+databases:
+  - name: leadgen-db
+    plan: free
+
+redis:
+  - name: leadgen-redis
+    plan: free
+    ipAllowList: [] # Only allow internal connections
