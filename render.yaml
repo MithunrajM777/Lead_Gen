@@ -45,7 +45,7 @@ databases:
   - name: leadgen-db
     plan: free
 
-redis:
+redisInstances:
   - name: leadgen-redis
     plan: free
     ipAllowList: [] # Only allow internal connections
