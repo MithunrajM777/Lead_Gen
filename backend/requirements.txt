@@ -16,6 +16,6 @@ python-multipart==0.0.26
 celery==5.6.3
 redis==7.4.0
 lxml==6.0.2
-dns.resolver==2.8.0
+dnspython==2.8.0
 psycopg2-binary==2.9.11
 gunicorn==23.0.0
